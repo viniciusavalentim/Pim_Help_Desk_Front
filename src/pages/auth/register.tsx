@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRightCircle, Ban, Eye, EyeOff } from "lucide-react";
+import { ArrowRightCircle, Ban, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const registerSchema = z.object({
     name: z.string().min(2),
@@ -23,10 +24,11 @@ type registerData = z.infer<typeof registerSchema>;
 
 export function Register() {
     const navigate = useNavigate();
+    const { isPending, register } = useAuth();
     const [password, setPassword] = useState<boolean>(false);
     const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
 
-    const { register, handleSubmit, formState: errors } = useForm<registerData>({
+    const { register: registeForm, handleSubmit, formState: errors } = useForm<registerData>({
         resolver: zodResolver(registerSchema)
     });
 
@@ -35,7 +37,7 @@ export function Register() {
     }
 
     async function handleSubmitForm(data: registerData) {
-        console.log(data);
+        register(data.name, data.email, data.password, data.confirmPassword, navigate);
     }
     return (
         <>
@@ -61,18 +63,18 @@ export function Register() {
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label>Nome</Label>
-                                <Input placeholder="Digite seu nome" {...register("name")} />
+                                <Input placeholder="Digite seu nome" {...registeForm("name")} />
                                 {errors.errors.name && <p className="text-red-600 text-sm text-start flex gap-2 items-center"><Ban className="w-3 h-3" /> Nome inválido</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label>Email</Label>
-                                <Input placeholder="Digite seu email" {...register("email")} />
+                                <Input placeholder="Digite seu email" {...registeForm("email")} />
                                 {errors.errors.email && <p className="text-red-600 text-sm text-start flex gap-2 items-center"><Ban className="w-3 h-3" /> Email inválido</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label>Senha</Label>
                                 <div className="relative">
-                                    <Input placeholder="Digite sua senha" type={password ? "text" : "password"}   {...register("password")} />
+                                    <Input placeholder="Digite sua senha" type={password ? "text" : "password"}   {...registeForm("password")} />
                                     <div className="absolute top-2 right-2" onClick={() => setPassword(!password)}>
                                         {password ? <Eye className="w-5 h-5 cursor-pointer" /> : <EyeOff className="w-5 h-5 cursor-pointer" />}
                                     </div>
@@ -82,7 +84,7 @@ export function Register() {
                             <div className="space-y-2">
                                 <Label>Confirme sua senha</Label>
                                 <div className="relative">
-                                    <Input placeholder="Digite sua senha" type={confirmPassword ? "text" : "password"}   {...register("confirmPassword")} />
+                                    <Input placeholder="Digite sua senha" type={confirmPassword ? "text" : "password"}   {...registeForm("confirmPassword")} />
                                     <div className="absolute top-2 right-2" onClick={() => setConfirmPassword(!confirmPassword)}>
                                         {confirmPassword ? <Eye className="w-5 h-5 cursor-pointer" /> : <EyeOff className="w-5 h-5 cursor-pointer" />}
                                     </div>
@@ -91,7 +93,16 @@ export function Register() {
                             </div>
                         </div>
                         <div className="w-full space-y-4">
-                            <Button className="w-full flex justify-between items-center bg-primary cursor-pointer">Entrar <ArrowRightCircle /></Button>
+                            <Button 
+                                disabled={isPending}    
+                                className="w-full flex justify-between items-center bg-primary cursor-pointer">
+                                Entrar
+                                {isPending ? (
+                                    <Loader2 className="animate-spin" />
+                                ) : (
+                                    <ArrowRightCircle />
+                                )}
+                            </Button>
                             <div>
                                 <p className="text-zinc-400">Já tem cadastrado? <span className="text-primary cursor-pointer" onClick={handleGoLogin}>Login</span></p>
                             </div>

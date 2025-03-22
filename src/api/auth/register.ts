@@ -1,24 +1,24 @@
 import api from "@/lib/axios";
-import { User } from "@/utils/types";
 
 export interface RegisterParams {
-    phone: string;
+    name: string;
+    email: string;
     password: string;
     confirmPassword: string;
 }
 
 export interface RegisterResponse {
+    data: any;
     message: string;
-    user: User;
-    token: string;
-    refreshToken: string;
+    status: true;
 }
 
-export async function Register({ confirmPassword, password, phone }: RegisterParams) {
-    const response = await api.post<RegisterResponse>("/auth/register", {
-        phone,
+export async function Register({ confirmPassword, password, email, name }: RegisterParams) {
+    const response = await api.post<RegisterResponse>("/api/Auth/register", {
         password,
-        confirmPassword
+        confirmPassword,
+        email, 
+        name
     });
 
     return response.data;

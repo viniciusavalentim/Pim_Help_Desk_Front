@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { LayoutAuth } from "./pages/auth";
 import { Login } from "./pages/auth/login";
 import { Register } from "./pages/auth/register";
+import { App } from "./pages/app";
 
 export const route = createBrowserRouter([
     {
@@ -19,6 +20,10 @@ export const route = createBrowserRouter([
             {   
                 path: "/register",
                 element: <Register />
+            },
+            {   
+                path: "/app",
+                element: <App />
             },
         ]
     }

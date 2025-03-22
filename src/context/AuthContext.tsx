@@ -14,9 +14,10 @@ interface AuthContextData {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     login: (phone: string, password: string, navigate: any) => Promise<void>;
-    register: (phone: string, password: string, confirmPassword: string, navigate: any) => Promise<void>;
+    register: (name: string, email: string, password: string, confirmPassword: string, navigate: any) => Promise<void>;
     logout: (navigate: any) => void;
     isAuthenticated: boolean;
+    isPending: boolean;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -56,20 +57,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
 
-    const { mutateAsync: registerFn } = useMutation({
+    const { mutateAsync: registerFn, isPending } = useMutation({
         mutationFn: Register,
         onSuccess: (data) => {
             toast.success("Registro feito com sucesso");
-            localStorage.setItem("@pim:user", JSON.stringify(data.user));
-            localStorage.setItem('accessToken', data.token);
-            setUser(data.user);
+            localStorage.setItem("@pim:user", JSON.stringify(data.data.user));
+            localStorage.setItem('accessToken', data.data.token);
+            setUser(data.data.user);
+            setIsAuthenticated(true);
         },
         onError: (error) => {
             console.log(error);
             if (isAxiosError(error) && error.response?.data.error) {
                 toast.error(error.response.data.error)
             } else {
-                toast.error("Ocorreu um erro ao realizar o login")
+                toast.error("Ocorreu um erro ao realizar o registro");
             }
         }
     });
@@ -99,10 +101,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    async function makeRegister(phone: string, password: string, confirmPassword: string, navigate: any) {
+    async function makeRegister(name: string, email: string, password: string, confirmPassword: string, navigate: any) {
         try {
-            await registerFn({ phone, password, confirmPassword });
-            navigate('/registro/nome', { replace: true });
+            await registerFn({ confirmPassword, password, email, name });
+            navigate('/app', { replace: true });
         } catch (err) {
             console.error("Error:", err);
         }
@@ -124,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser,
                 login: makeLogin,
                 register: makeRegister,
+                isPending: isPending,   
                 logout: makeLogout,
                 isAuthenticated: isAuthenticated,
             }}
