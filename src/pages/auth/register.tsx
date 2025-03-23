@@ -24,7 +24,7 @@ type registerData = z.infer<typeof registerSchema>;
 
 export function Register() {
     const navigate = useNavigate();
-    const { isPending, register } = useAuth();
+    const { isPendingRegister, register } = useAuth();
     const [password, setPassword] = useState<boolean>(false);
     const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ export function Register() {
     return (
         <>
             <div className="hidden w-[60%] items-center justify-center p-8 lg:flex">
-                <div className="max-w-md">
+                <div className="max-w-md ">
                     <img
                         src="/register.svg"
                         width={400}
@@ -94,10 +94,10 @@ export function Register() {
                         </div>
                         <div className="w-full space-y-4">
                             <Button 
-                                disabled={isPending}    
+                                disabled={isPendingRegister}    
                                 className="w-full flex justify-between items-center bg-primary cursor-pointer">
-                                Entrar
-                                {isPending ? (
+                                Registrar-se
+                                {isPendingRegister ? (
                                     <Loader2 className="animate-spin" />
                                 ) : (
                                     <ArrowRightCircle />

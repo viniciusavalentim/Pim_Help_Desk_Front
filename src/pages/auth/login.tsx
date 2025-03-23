@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRightCircle, Ban, Eye, EyeOff } from "lucide-react";
+import { ArrowRightCircle, Ban, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -17,6 +18,8 @@ type LoginSchema = z.infer<typeof loginSchema>;
 
 export function Login() {
     const navigate = useNavigate();
+    const { isPendingLogin, login } = useAuth();
+
     const [password, setPassword] = useState<boolean>(false);
 
     const { register, handleSubmit, formState: errors } = useForm<LoginSchema>({
@@ -25,6 +28,10 @@ export function Login() {
 
     const handleGoRegister = () => {
         navigate('/register');
+    }
+
+    async function handleSubmitForm(data: LoginSchema) {
+        login(data.email, data.password, navigate);
     }
     return (
         <>
@@ -42,7 +49,7 @@ export function Login() {
 
             <div className="flex w-full flex-col justify-center p-8 lg:w-[40%] rounded-lg shadow-lg">
                 <div className="flex flex-col space-y-12 w-full max-w-md text-center sm:p-6 py-12 mx-auto">
-                    <form className="space-y-4" onSubmit={handleSubmit((data) => console.log(data))}>
+                    <form className="space-y-4" onSubmit={handleSubmit(handleSubmitForm)}>
                         <div>
                             <h1 className="text-zinc-900 text-3xl font-bold">Olá, Novamente</h1>
                             <p className="text-zinc-400">Insira seus dados para realizar o login</p>
@@ -65,7 +72,17 @@ export function Login() {
                             </div>
                         </div>
                         <div className="w-full space-y-4">
-                            <Button className="w-full flex justify-between items-center bg-primary cursor-pointer">Entrar <ArrowRightCircle /></Button>
+                            <Button
+                                className="w-full flex justify-between items-center bg-primary cursor-pointer"
+                                disabled={isPendingLogin}
+                            >
+                                Entrar
+                                {isPendingLogin ? (
+                                    <Loader2 className="animate-spin" />
+                                ) : (
+                                    <ArrowRightCircle />
+                                )}
+                            </Button>
                             <div>
                                 <p className="text-zinc-400">Ainda não está cadastrado? <span className="text-primary cursor-pointer" onClick={handleGoRegister}>Registre-se</span></p>
                             </div>

@@ -1,22 +1,20 @@
 import api from "@/lib/axios";
-import { User } from "@/utils/types";
 
 export interface LoginParams {
-    phone: string;
+    email: string;
     password: string;
 }
 
 export interface LoginResponse {
+    data: any;
     message: string;
-    user: User;
-    token: string;
-    refreshToken: string;
+    status: true;
 }
 
-export async function Login({ password, phone }: LoginParams) {
-    const response = await api.post<LoginResponse>("/auth/login", {
-        phone,
-        password,
+export async function Login({ password, email }: LoginParams) {
+    const response = await api.post<LoginResponse>("/api/Auth/login", {
+        email,
+        password
     });
 
     return response.data;
