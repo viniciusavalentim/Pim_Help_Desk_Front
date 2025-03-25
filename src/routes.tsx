@@ -3,6 +3,7 @@ import { LayoutAuth } from "./pages/auth";
 import { Login } from "./pages/auth/login";
 import { Register } from "./pages/auth/register";
 import Page from "./pages/app";
+import { TicketsDashboard } from "./pages/app/requester/dashboard";
 
 export const route = createBrowserRouter([
     {
@@ -27,7 +28,11 @@ export const route = createBrowserRouter([
                 children: [
                     {
                         path: "",
-                        element: <><h1>ola mundo</h1></>
+                        element: <TicketsDashboard />
+                    },
+                    {
+                        path: "dashboard",
+                        element: <TicketsDashboard />
                     }
                 ]
             },

@@ -56,7 +56,7 @@ export function NavMain({
           >
             <SidebarMenuItem className="text-zinc-200">
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title} className={`${location.pathname.split('/')[2] === item.url.split('/')[2] ? "bg-[#818cf8] active:bg-[#818cf8] hover:bg-[#818cf8]" : ""}`}>
+                <SidebarMenuButton tooltip={item.title} className={`${location.pathname.split('/')[2] === item.url.split('/')[2] ? "bg-white active:bg-white hover:bg-white text-zinc-800" : ""}`}>
                   {item.icon && <item.icon />}
                   <span className="text-title font-semibold">{item.title}</span>
                   {item.items?.length && (<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />)}
