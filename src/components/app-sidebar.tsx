@@ -22,7 +22,7 @@ const data = {
   navMain: [
     { title: "Central de Chamados", url: "/app/dashboard", icon: HouseIcon, roles: ['app'] },
     { title: "Perfil", url: "/app/perfil", icon: User2, roles: ['app'] },
-    { title: "Histórico", url: "/app/marketing", icon: Clock10, roles: ['app'] },
+    { title: "Histórico", url: "/app/historico", icon: Clock10, roles: ['app'] },
     /* {
       title: "Laudadores", url: "#", icon: UsersRound, items:
         [

@@ -5,6 +5,8 @@ import { Register } from "./pages/auth/register";
 import Page from "./pages/app";
 import { TicketsDashboard } from "./pages/app/requester/dashboard";
 import { ViewTicket } from "./pages/app/requester/dashboard/viewTicket";
+import { NewTicket } from "./pages/app/requester/ticket/novo-ticket";
+import ChamadoSucesso from "./pages/app/requester/ticket/success-ticket";
 
 export const route = createBrowserRouter([
     {
@@ -42,7 +44,24 @@ export const route = createBrowserRouter([
                     {
                         path: "dashboard/ticket/:id",
                         element: <ViewTicket />
-                    }
+                    },
+                    {
+                        path: "dashboard/novo-chamado",
+                        element: <NewTicket />
+                    },
+                    {
+                        path: "dashboard/chamado/sucesso",
+                        element: <ChamadoSucesso />
+                    },
+                    {
+                        path: "perfil/",
+                        element: <NewTicket />
+                    },
+                    {
+                        path: "historico/",
+                        element: <NewTicket />
+                    },
+
                 ]
             },
         ]

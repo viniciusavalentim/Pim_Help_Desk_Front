@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async function makeLogin(email: string, password: string, navigate: any) {
         try {
             await loginFn({ email, password });
-            navigate('/app', { replace: true });
+            navigate('/app/dashboard', { replace: true });
         } catch (error) {
             if (isAxiosError(error) && error.response?.data.message) {
                 toast.error(error.response.data.message);
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async function makeRegister(name: string, email: string, password: string, confirmPassword: string, navigate: any) {
         try {
             await registerFn({ confirmPassword, password, email, name });
-            navigate('/app', { replace: true });
+            navigate('/app/dashboard', { replace: true });
         } catch (err) {
             console.error("Error:", err);
         }
