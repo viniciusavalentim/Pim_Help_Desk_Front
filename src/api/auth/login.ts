@@ -6,9 +6,10 @@ export interface LoginParams {
 }
 
 export interface LoginResponse {
-    data: any;
+    token: string;
     message: string;
     status: true;
+    user: any;
 }
 
 export async function Login({ password, email }: LoginParams) {

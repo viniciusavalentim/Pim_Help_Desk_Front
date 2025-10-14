@@ -113,13 +113,13 @@ export function NewTicket() {
                                 <Input value={user?.name} readOnly />
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm font-medium mb-1">Número do Chamado</label>
                                 <Input
                                     value={`CH-${Math.floor(Math.random() * 90000 + 10000)}`}
                                     readOnly
                                 />
-                            </div>
+                            </div> */}
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Data da solicitação</label>

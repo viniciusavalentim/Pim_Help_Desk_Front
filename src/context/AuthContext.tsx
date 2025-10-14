@@ -41,14 +41,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { mutateAsync: loginFn, isPending: isPendingLogin } = useMutation({
         mutationFn: Login,
         onSuccess: (data) => {
+            console.log("aqui")
+            console.log(data)
             toast.success("Login feito com sucesso");
-            localStorage.setItem("@pim:user", JSON.stringify(data.data.user));
-            localStorage.setItem('accessToken', data.data.token);
-            setUser(data.data.user);
+            localStorage.setItem("@pim:user", JSON.stringify(data.user));
+            localStorage.setItem('accessToken', data.token);
+            setUser(data.user);
             setIsAuthenticated(true);
         },
         onError: (error) => {
-            console.log(error);
+            console.log("aqui")
             if (isAxiosError(error) && error.response?.data.error) {
                 toast.error(error.response.data.error)
             } else {
@@ -62,9 +64,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         mutationFn: Register,
         onSuccess: (data) => {
             toast.success("Registro feito com sucesso");
-            localStorage.setItem("@pim:user", JSON.stringify(data.data.user));
-            localStorage.setItem('accessToken', data.data.token);
-            setUser(data.data.user);
+            localStorage.setItem("@pim:user", JSON.stringify(data.user));
+            localStorage.setItem('accessToken', data.token);
+            setUser(data.user);
             setIsAuthenticated(true);
         },
         onError: (error) => {
@@ -75,8 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
         }
     });
-
-
 
     const { mutateAsync: logoutFn } = useMutation({
         mutationFn: Logout,

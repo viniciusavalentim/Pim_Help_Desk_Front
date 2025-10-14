@@ -8,16 +8,17 @@ export interface RegisterParams {
 }
 
 export interface RegisterResponse {
-    data: any;
+    token: string;
     message: string;
     status: true;
+    user: any;
 }
 
 export async function Register({ confirmPassword, password, email, name }: RegisterParams) {
     const response = await api.post<RegisterResponse>("/api/Auth/register", {
         password,
         confirmPassword,
-        email, 
+        email,
         name
     });
 

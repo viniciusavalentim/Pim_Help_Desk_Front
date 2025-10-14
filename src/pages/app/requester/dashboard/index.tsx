@@ -11,101 +11,46 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useMemo, useState } from "react";
-
-interface Tickets {
-    id: string
-    title: string
-    description: string
-    createdAt: string
-    evaluatio: string
-    status: string
-    category: string
-    priority: string
-}
-
-const tickets: Tickets[] = [
-    {
-        id: "HP-1212",
-        title: "Problema de login",
-        description: "Usuário não consegue acessar a conta.",
-        createdAt: "2025-03-28T10:00:00Z",
-        evaluatio: "Pendente",
-        status: "Aberto",
-        category: "Suporte Técnico",
-        priority: "Alta"
-    },
-    {
-        id: "HP-1242",
-        title: "Erro na funcionalidade de pagamento",
-        description: "O sistema não processa os pagamentos corretamente.",
-        createdAt: "2025-03-27T14:30:00Z",
-        evaluatio: "Em andamento",
-        status: "Em progresso",
-        category: "Financeiro",
-        priority: "Média"
-    },
-    {
-        id: "HP-0000",
-        title: "Falha na exibição do dashboard",
-        description: "O dashboard não carrega as informações corretamente.",
-        createdAt: "2025-03-26T09:00:00Z",
-        evaluatio: "Pendente",
-        status: "Aberto",
-        category: "Desenvolvimento",
-        priority: "Baixa"
-    },
-    {
-        id: "HP-1123",
-        title: "Solicitação de aumento de recursos",
-        description: "Requisição para aumentar o limite de armazenamento.",
-        createdAt: "2025-03-25T12:45:00Z",
-        evaluatio: "Aprovado",
-        status: "Fechado",
-        category: "Infraestrutura",
-        priority: "Média"
-    },
-    {
-        id: "HP-1902",
-        title: "Bug na interface do usuário",
-        description: "Botões não estão sendo exibidos corretamente.",
-        createdAt: "2025-03-24T16:20:00Z",
-        evaluatio: "Em andamento",
-        status: "Em progresso",
-        category: "Design",
-        priority: "Alta"
-    },
-];
-
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { GetTickets, GetTicketsParams } from "@/api/tickets/FindTickets";
+import { getPriorityInPortuguese, getPriorityStringFromEnum, getStatusTicketInPortuguese, getStatusTicketStringFromEnum } from "@/helper/enums";
+import { PriorityEnum, StatusTicketEnum } from "@/utils/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import FloatingChat from "../components/floating-chat";
 
 function getDate(date: string) {
     return new Date(date).toLocaleDateString();
 }
 
-const getStatusClasses = (status: string) => {
+const getStatusClasses = (status: StatusTicketEnum) => {
     const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border';
 
-    switch (status.toLowerCase()) {
-        case 'aberto':
+    const statusString = getStatusTicketStringFromEnum(status);
+    switch (statusString ? statusString.toLowerCase() : "") {
+        case 'pending':
             return `${baseClasses} border-blue-500 text-blue-700 bg-blue-100`;
-        case 'em progresso':
+        case 'in_progress':
             return `${baseClasses} border-yellow-500 text-yellow-700 bg-yellow-100`;
-        case 'fechado':
+        case 'resolved':
             return `${baseClasses} border-green-500 text-green-700 bg-green-100`;
+        case 'canceled':
+            return `${baseClasses} border-red-500 text-red-700 bg-red-100`;
         default:
             return `${baseClasses} border-gray-500 text-gray-700 bg-gray-100`;
     }
 };
 
+const getPriorityColor = (priority: PriorityEnum) => {
 
+    const priorityString = getPriorityStringFromEnum(priority);
 
-const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-        case 'alta':
+    switch (priorityString) {
+        case 'high':
             return 'bg-red-600';
-        case 'média':
+        case 'medium':
             return 'bg-yellow-500';
-        case 'baixa':
+        case 'low':
             return 'bg-green-700';
         default:
             return 'bg-gray-500';
@@ -115,40 +60,43 @@ const getPriorityColor = (priority: string) => {
 export function TicketsDashboard() {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [priorityFilter, setPriorityFilter] = useState<string>('all');
-    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [filters, setFilters] = useState<Partial<GetTicketsParams>>({});
 
-    const filteredTickets = useMemo(() => {
-        return tickets.filter(ticket => {
-            const searchLower = searchTerm.toLowerCase();
-            const ticketPriority = ticket.priority.toLowerCase();
-            const ticketStatus = ticket.status.toLowerCase();
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+        setFilters(prev => ({ ...prev, [type]: e.target.value }));
+    };
 
-            const matchesSearch = searchTerm === '' ||
-                ticket.title.toLowerCase().includes(searchLower) ||
-                ticket.description.toLowerCase().includes(searchLower) ||
-                ticket.id.toLowerCase().includes(searchLower) ||
-                getDate(ticket.createdAt).toLowerCase().includes(searchLower);
+    const handleSelectChange = (name: 'status' | 'priority', value: string) => {
+        setFilters(prev => ({ ...prev, [name]: value }));
+    };
 
-            const matchesPriority = priorityFilter === 'all' ||
-                ticketPriority === priorityFilter.toLowerCase();
-
-            const matchesStatus = statusFilter === 'all' ||
-                ticketStatus === statusFilter.toLowerCase();
-
-            return matchesSearch && matchesPriority && matchesStatus;
-        });
-    }, [searchTerm, priorityFilter, statusFilter]);
-
+    const { data: tickets, isLoading } = useQuery({
+        queryKey: ["FindTicketsUser", filters],
+        queryFn: () => {
+            const cleanFilters: Partial<GetTicketsParams> = {};
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value) {
+                    cleanFilters[key as keyof GetTicketsParams] = value;
+                }
+            });
+            return GetTickets(cleanFilters);
+        },
+        placeholderData: (previousData) => previousData,
+    });
 
     const summaryCounts = useMemo(() => {
         return {
-            open: tickets.filter(t => t.status === 'Aberto').length,
-            inProgress: tickets.filter(t => t.status === 'Em progresso').length,
-            closed: tickets.filter(t => t.status === 'Fechado').length,
+            open: tickets?.tickets.filter(t => getStatusTicketStringFromEnum(t.status) === 'Aberto').length,
+            inProgress: tickets?.tickets.filter(t => getStatusTicketStringFromEnum(t.status) === 'in_progress').length,
+            closed: tickets?.tickets.filter(t => getStatusTicketStringFromEnum(t.status) === 'Fechado').length,
         };
     }, []);
+
+    useEffect(() => {
+        setFilters({
+            requesterId: user?.id
+        })
+    }, [user])
 
     return (
         <>
@@ -170,83 +118,95 @@ export function TicketsDashboard() {
                             <Input
                                 placeholder="Pesquisar por título, descrição, ID ou data..."
                                 className="pl-10"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={filters.searchText} onChange={(e) => handleInputChange(e, "searchText")}
                             />
                             <div className="absolute left-0 top-0 h-full flex items-center px-2">
                                 <Search className="text-gray-400" />
                             </div>
                         </div>
 
-                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                        <Select value={filters.priority} onValueChange={(e) => handleSelectChange("priority", e)}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Prioridade" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todas</SelectItem>
-                                <SelectItem value="Alta">Alta</SelectItem>
-                                <SelectItem value="Média">Média</SelectItem>
-                                <SelectItem value="Baixa">Baixa</SelectItem>
+                                <SelectItem value="1">Alta</SelectItem>
+                                <SelectItem value="2">Média</SelectItem>
+                                <SelectItem value="3">Baixa</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <Select value={filters.status} onValueChange={(e) => handleSelectChange("status", e)}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Status" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todos</SelectItem>
-                                <SelectItem value="Aberto">Aberto</SelectItem>
-                                <SelectItem value="Em progresso">Em progresso</SelectItem>
-                                <SelectItem value="Fechado">Fechado</SelectItem>
+                                <SelectItem value="1">Aberto</SelectItem>
+                                <SelectItem value="2">Em Andamento</SelectItem>
+                                <SelectItem value="3">Fechado</SelectItem>
+                                <SelectItem value="4">Cancelado</SelectItem>
+
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="flex flex-col xl:flex-row gap-2 mt-4">
                         <div className="w-full xl:w-2/3 space-y-4">
-                            {filteredTickets.length > 0 ? (
-                                filteredTickets.map((ticket) => (
-                                    <div key={ticket.id} className="w-full border border-zinc-300 rounded-md p-4">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <div className="flex gap-2 items-center">
-                                                    <h1 className="text-lg font-semibold">{ticket.title}</h1>
-                                                    <Badge className={`${getPriorityColor(ticket.priority)}`}>
-                                                        {ticket.priority}
-                                                    </Badge>
-                                                </div>
-                                                <p className="text-sm text-gray-500">{ticket.description}</p>
-                                            </div>
-                                            <div>
-                                                <Badge className={getStatusClasses(ticket.status)}>
-                                                    {ticket.status}
-                                                </Badge>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex justify-between">
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <MessageCircle className="text-blue-600 w-5 h-5" />
-                                                <span>2 respostas</span>
-                                                {getDate(ticket.createdAt)}
-                                            </div>
-                                            <div>
-                                                <Button
-                                                    className="h-7 w-30 text-xs"
-                                                    onClick={() => navigate("ticket/" + ticket.id)}
-                                                    variant={"outline"}
-                                                >
-                                                    Ver Detalhes
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="w-full border border-zinc-300 rounded-md p-4 text-center">
-                                    <p>Nenhum chamado encontrado com os filtros selecionados.</p>
+                            {isLoading ? (<>
+                                <div className="w-full xl:w-full space-y-4">
+                                    {[...Array(3)].map((_, i) => (
+                                        <Skeleton className="h-30 w-full bg-gray-100 border border-gray-200" key={i.toString()} />
+                                    ))}
                                 </div>
+                            </>
+                            ) : (
+                                <>
+                                    {tickets && tickets?.tickets && tickets?.tickets.length > 0 ? (
+                                        tickets?.tickets.map((ticket) => (
+                                            <div key={ticket.id} className="w-full border border-zinc-300 rounded-md p-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <div className="flex gap-2 items-center">
+                                                            <h1 className="text-lg font-semibold">{ticket.title}</h1>
+                                                            <Badge className={`${getPriorityColor(ticket.priority)}`}>
+                                                                {getPriorityInPortuguese(ticket.priority)}
+                                                            </Badge>
+                                                        </div>
+                                                        <p className="text-sm text-gray-500">{ticket.description}</p>
+                                                    </div>
+                                                    <div>
+                                                        <Badge className={getStatusClasses(ticket.status)}>
+                                                            {getStatusTicketInPortuguese(ticket.status)}
+                                                        </Badge>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex justify-between">
+                                                    <div className="mt-2 flex items-center gap-2">
+                                                        <MessageCircle className="text-blue-600 w-5 h-5" />
+                                                        <span>{ticket.ticketResponses?.length} respostas</span>
+                                                        {getDate(ticket.createdAt)}
+                                                    </div>
+                                                    <div>
+                                                        <Button
+                                                            className="h-7 w-30 text-xs"
+                                                            onClick={() => navigate("ticket/" + ticket.id)}
+                                                            variant={"outline"}
+                                                        >
+                                                            Ver Detalhes
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="w-full border border-zinc-300 rounded-md p-4 text-center">
+                                            <p>Nenhum chamado encontrado com os filtros selecionados.</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
 
@@ -288,6 +248,7 @@ export function TicketsDashboard() {
                     </div>
                 </main>
             </div>
+            <FloatingChat />
         </>
     )
 }
