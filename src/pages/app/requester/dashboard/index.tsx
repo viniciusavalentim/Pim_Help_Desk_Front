@@ -23,7 +23,7 @@ function getDate(date: string) {
     return new Date(date).toLocaleDateString();
 }
 
-const getStatusClasses = (status: StatusTicketEnum) => {
+export const getStatusClasses = (status: StatusTicketEnum) => {
     const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border';
 
     const statusString = getStatusTicketStringFromEnum(status);
@@ -41,7 +41,7 @@ const getStatusClasses = (status: StatusTicketEnum) => {
     }
 };
 
-const getPriorityColor = (priority: PriorityEnum) => {
+export const getPriorityColor = (priority: PriorityEnum) => {
 
     const priorityString = getPriorityStringFromEnum(priority);
 

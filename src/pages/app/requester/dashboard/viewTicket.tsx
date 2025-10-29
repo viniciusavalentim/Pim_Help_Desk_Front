@@ -1,15 +1,31 @@
+import { GetTicket } from "@/api/tickets/findTicket";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getCategoryInPortuguese, getPriorityInPortuguese, getStatusTicketInPortuguese } from "@/helper/enums";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Clock } from "lucide-react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import { getPriorityColor, getStatusClasses } from ".";
 
 export function ViewTicket() {
     const navigate = useNavigate();
+    const { id } = useParams() as { id: string };
 
     const handleBackPage = () => {
-        navigate("/app/dashboard");
+        navigate(-1);
     }
+
+    const { data: findTicketQuery } = useQuery({
+        queryKey: ["findTicketQuery", id],
+        queryFn: () => GetTicket({ ticketId: id }),
+        enabled: !!id
+    });
+
+    if (!findTicketQuery) {
+        return
+    }
+
     return (
         <>
             <div className="p-4">
@@ -20,7 +36,7 @@ export function ViewTicket() {
                     </Button>
                 </div>
                 <div className="container mx-auto py-6 ">
-                    <div className="text-sm text-gray-600 mb-2">Central de Chamados &gt; Problema com a impressora</div>
+                    <div className="text-sm text-gray-600 mb-2">Central de Chamados &gt; {findTicketQuery?.ticket?.title}</div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2">
@@ -28,29 +44,29 @@ export function ViewTicket() {
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <h2 className="text-lg font-semibold">Detalhes do seu chamado</h2>
-                                        <p className="text-sm text-gray-500">Detalhes do chamado: #1214</p>
+                                        <p className="text-sm text-gray-500">Detalhes do chamado: #{findTicketQuery.ticket.id.slice(0, 6)}</p>
                                     </div>
-                                    <Badge className="bg-green-500 hover:bg-green-600">Concluída</Badge>
+                                    <Badge className={getStatusClasses(findTicketQuery.ticket.status)}>{getStatusTicketInPortuguese(findTicketQuery.ticket.status)}</Badge>
                                 </div>
 
                                 <div className="space-y-4">
                                     <div className="flex items-center">
-                                        <h3 className="text-base font-medium">Problema com a impressora</h3>
-                                        <Badge className="ml-2 bg-red-400 hover:bg-red-500">Alta</Badge>
+                                        <h3 className="text-base font-medium mr-2">Problema com a impressora</h3>
+                                        <Badge className={getPriorityColor(findTicketQuery.ticket.priority)}>{getPriorityInPortuguese(findTicketQuery.ticket.priority)}</Badge>
                                     </div>
 
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Categoria:</p>
-                                        <p>Dispositivos (Impressoras, Hardwares, etc...)</p>
+                                        <p>{getCategoryInPortuguese(findTicketQuery.ticket.category)}</p>
                                     </div>
 
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Descrição:</p>
-                                        <p>Impressora não imprime papel</p>
+                                        <p>{findTicketQuery.ticket.description}</p>
                                     </div>
 
                                     <div className="text-right text-sm text-gray-500">
-                                        <p>Criado em: Ontem às 14:30</p>
+                                        <p>Criado em: {new Date(findTicketQuery.ticket.createdAt).toLocaleString("pt-BR")}</p>
                                     </div>
                                 </div>
                             </div>
@@ -71,11 +87,9 @@ export function ViewTicket() {
                                     <div className="ml-3">
                                         <div className="flex justify-between">
                                             <p className="font-medium">Eduardo</p>
-                                            <p className="text-gray-500">Ramal</p>
                                         </div>
                                         <div className="flex justify-between">
-                                            <p className="text-gray-500"></p>
-                                            <p className="font-medium">1313</p>
+                                            <p className="text-gray-500">Ramal: 1313</p>
                                         </div>
                                     </div>
                                 </div>
@@ -106,17 +120,30 @@ export function ViewTicket() {
                     {/* Histórico de interações */}
                     <div className="mt-6 space-y-4">
                         {/* Primeira mensagem */}
-                        <div className="bg-white rounded-lg border p-4">
-                            <div className="flex items-center mb-3">
-                                <Avatar className="h-8 w-8 bg-[#f8d7f9]">
-                                    <AvatarFallback className="bg-[#f8d7f9] text-[#a44fb3]">E</AvatarFallback>
-                                </Avatar>
-                                <div className="ml-2 font-medium">Eduardo</div>
-                            </div>
-                            <p>Tente reiniciar o seu computador.</p>
-                        </div>
 
-                        {/* Segunda mensagem */}
+                        {findTicketQuery.ticket.ticketResponses ? (
+                            <>
+                                {findTicketQuery.ticket.ticketResponses.map(response => (
+                                    <>
+                                        <div className="bg-white rounded-lg border p-4">
+                                            <div className="flex items-center mb-3">
+                                                <Avatar className="h-8 w-8 bg-[#f8d7f9]">
+                                                    <AvatarFallback className="bg-[#f8d7f9] text-[#a44fb3]">{response.user?.name.slice(0, 1)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="ml-2 font-medium">{response.user?.name}</div>
+                                            </div>
+                                            <p>{response.description}</p>
+                                        </div>
+                                    </>
+                                ))}
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="text-center font-medium">Sem respostas por enquanto.</h1>
+                            </>
+                        )}
+
+                        {/* Segunda mensagem
                         <div className="bg-white rounded-lg border p-4">
                             <div className="flex items-center mb-3">
                                 <Avatar className="h-8 w-8 bg-[#f8d7f9]">
@@ -129,7 +156,7 @@ export function ViewTicket() {
                                 industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
                                 scrambled it to make a type specimen book. It has survived not o
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

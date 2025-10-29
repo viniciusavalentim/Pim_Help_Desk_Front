@@ -14,14 +14,14 @@ export interface Conversation {
 }
 
 export interface GetChatMessagesParams {
-    chatId: string;
+    userId: string;
 }
 
 export interface GetChatMessagesResponse {
     conversations: Conversation[];
 }
 
-export async function GetChatMessages({ chatId }: GetChatMessagesParams) {
-    const response = await api.get<GetChatMessagesResponse>(`/api/OpenAi/${chatId}`);
+export async function GetChatMessages({ userId }: GetChatMessagesParams) {
+    const response = await api.get<GetChatMessagesResponse>(`/api/OpenAi/${userId}`);
     return response.data;
 }

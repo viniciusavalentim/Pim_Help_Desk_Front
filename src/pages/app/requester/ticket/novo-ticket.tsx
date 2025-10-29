@@ -7,23 +7,80 @@ import { Badge } from "@/components/ui/badge"
 import { useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/context/AuthContext"
+import { useMutation } from "@tanstack/react-query"
+import { StoreTicket } from "@/api/tickets/storeTicket"
+import { toast } from "sonner"
+import { useState } from "react"
 
 export function NewTicket() {
     const navigate = useNavigate();
     const { user } = useAuth();
+    const [description, setDescription] = useState<string>("");
+    const [category, setCategory] = useState<string>("");
+    const [priority, setPriority] = useState<string>("");
+    const [title, setTitle] = useState<string>("");
 
     async function handleSubmit() {
         navigate("/app/dashboard/chamado/sucesso")
     }
 
+    const { mutateAsync: storeNewTicketFn } = useMutation({
+        mutationFn: StoreTicket,
+        onSuccess(data) {
+            toast.success(data.message);
+            handleSubmit();
+        },
+        onError(err) {
+            toast.error("Não foi possível salvar seu chamado");
+            console.error(err)
+        }
+    })
+
+    const handleStoreNewTicket = async () => {
+
+        if (!description || description.length < 2) {
+            toast.error("Descrição inválida");
+        }
+
+        if (!title || title.length < 2) {
+            toast.error("Título inválido");
+        }
+
+        if (!priority || priority.length < 1) {
+            toast.error("Prioridade inválida");
+        }
+
+        if (!category || category.length < 1) {
+            toast.error("Categoria inválida");
+        }
+
+        try {
+            await storeNewTicketFn({
+                requesterId: user?.id ?? "",
+                description,
+                category,
+                priority,
+                title
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
     return (
         <div className="container mx-auto px-4 py-6 max-w-7xl">
             <div className="text-sm text-gray-600 mb-2">Central de Chamados &gt; Novo Chamado</div>
-
-            <Button className="flex items-center  cursor-pointer my-6" onClick={() => navigate("/app/dashboard")}>
+            {/* <Button className="flex items-center  cursor-pointer" >
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Voltar
-            </Button>
+            </Button> */}
+            <div>
+                <Button onClick={() => navigate("/app/dashboard")} className="bg-transparent hover:bg-transparent shadow-none text-zinc-800 cursor-pointer  my-6">
+                    <ArrowLeft />
+                    Voltar
+                </Button>
+            </div>
 
             <h1 className="text-2xl font-bold mb-6">Criar Novo Chamado</h1>
 
@@ -39,7 +96,7 @@ export function NewTicket() {
                                 <label htmlFor="titulo" className="block text-sm font-medium mb-1">
                                     Título do chamado
                                 </label>
-                                <Input id="titulo" placeholder="Digite o título do chamado" />
+                                <Input id="titulo" placeholder="Digite o título do chamado" value={title} onChange={(e) => setTitle(e.target?.value)} />
                             </div>
 
                             <div>
@@ -50,6 +107,7 @@ export function NewTicket() {
                                     id="descricao"
                                     placeholder="Descreva detalhadamente o seu problema"
                                     className="min-h-[210px]"
+                                    value={description} onChange={(e) => setDescription(e.target?.value)}
                                 />
                             </div>
 
@@ -58,16 +116,16 @@ export function NewTicket() {
                                     <label htmlFor="categoria" className="block text-sm font-medium mb-1">
                                         Categoria
                                     </label>
-                                    <Select>
+                                    <Select value={category} onValueChange={(e) => setCategory(e)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecione uma categoria" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="suporte">Suporte Técnico</SelectItem>
-                                            <SelectItem value="infraestrutura">Infraestrutura</SelectItem>
-                                            <SelectItem value="software">Software</SelectItem>
-                                            <SelectItem value="hardware">Hardware</SelectItem>
-                                            <SelectItem value="rede">Rede</SelectItem>
+                                            <SelectItem value="1">Suporte Técnico</SelectItem>
+                                            <SelectItem value="2">Infraestrutura</SelectItem>
+                                            <SelectItem value="3">Software</SelectItem>
+                                            <SelectItem value="4">Hardware</SelectItem>
+                                            <SelectItem value="5">Rede</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -76,15 +134,14 @@ export function NewTicket() {
                                     <label htmlFor="prioridade" className="block text-sm font-medium mb-1">
                                         Prioridade
                                     </label>
-                                    <Select>
+                                    <Select value={priority} onValueChange={(e) => setPriority(e)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecione uma prioridade" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="baixa">Baixa</SelectItem>
-                                            <SelectItem value="media">Média</SelectItem>
-                                            <SelectItem value="alta">Alta</SelectItem>
-                                            <SelectItem value="critica">Crítica</SelectItem>
+                                            <SelectItem value="3">Baixa</SelectItem>
+                                            <SelectItem value="2">Média</SelectItem>
+                                            <SelectItem value="1">Alta</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -93,7 +150,7 @@ export function NewTicket() {
                         <Separator className="my-6" />
                         <div className="flex justify-between">
                             <Button variant="outline" onClick={() => navigate("/app/dashboard")}>Cancelar</Button>
-                            <Button className="bg-[#3b4fd1] hover:bg-[#2c3eb8]" onClick={handleSubmit}>
+                            <Button className="bg-[#3b4fd1] hover:bg-[#2c3eb8]" onClick={handleStoreNewTicket}>
                                 <span className="mr-2">Enviar chamado</span>
                                 <Send />
                             </Button>
