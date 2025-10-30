@@ -7,6 +7,7 @@ import { TicketsDashboard } from "./pages/app/requester/dashboard";
 import { ViewTicket } from "./pages/app/requester/dashboard/viewTicket";
 import { NewTicket } from "./pages/app/requester/ticket/novo-ticket";
 import ChamadoSucesso from "./pages/app/requester/ticket/success-ticket";
+import { AtendentePage } from "./pages/app/attedant";
 
 export const route = createBrowserRouter([
     {
@@ -54,12 +55,16 @@ export const route = createBrowserRouter([
                         element: <ChamadoSucesso />
                     },
                     {
-                        path: "perfil/",
+                        path: "perfil",
                         element: <NewTicket />
                     },
                     {
-                        path: "historico/",
+                        path: "historico",
                         element: <NewTicket />
+                    },
+                    {
+                        path: "atendente",
+                        element: <AtendentePage />
                     },
 
                 ]

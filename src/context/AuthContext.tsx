@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { mutateAsync: loginFn, isPending: isPendingLogin } = useMutation({
         mutationFn: Login,
         onSuccess: (data) => {
-            console.log("aqui")
             console.log(data)
             toast.success("Login feito com sucesso");
             localStorage.setItem("@pim:user", JSON.stringify(data.user));
@@ -95,7 +94,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async function makeLogin(email: string, password: string, navigate: any) {
         try {
             await loginFn({ email, password });
-            navigate('/app/dashboard', { replace: true });
+            if (user?.userType == 3) {
+                navigate('/app/dashboard', { replace: true })
+            } else (
+                navigate('/app/atendente', { replace: true })
+            )
         } catch (error) {
             if (isAxiosError(error) && error.response?.data.message) {
                 toast.error(error.response.data.message);

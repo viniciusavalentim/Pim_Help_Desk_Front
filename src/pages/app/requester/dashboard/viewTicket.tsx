@@ -128,9 +128,11 @@ export function ViewTicket() {
                                         <div className="bg-white rounded-lg border p-4">
                                             <div className="flex items-center mb-3">
                                                 <Avatar className="h-8 w-8 bg-[#f8d7f9]">
-                                                    <AvatarFallback className="bg-[#f8d7f9] text-[#a44fb3]">{response.user?.name.slice(0, 1)}</AvatarFallback>
+                                                    {/* <AvatarFallback className="bg-[#f8d7f9] text-[#a44fb3]">{response.user?.name.slice(0, 1)}</AvatarFallback> */}
+                                                    <AvatarFallback className="bg-[#f8d7f9] text-[#a44fb3]">E</AvatarFallback>
                                                 </Avatar>
-                                                <div className="ml-2 font-medium">{response.user?.name}</div>
+                                                {/* <div className="ml-2 font-medium">{response.user?.name}</div> */}
+                                                <div className="ml-2 font-medium">Eduardo</div>
                                             </div>
                                             <p>{response.description}</p>
                                         </div>

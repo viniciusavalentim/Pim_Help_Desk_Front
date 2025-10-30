@@ -6,12 +6,10 @@ import {
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
@@ -20,9 +18,11 @@ const data = {
   user:
     { name: "Bleiner", email: "bleiner@gmail.com", avatar: "/bleiner.png" },
   navMain: [
-    { title: "Central de Chamados", url: "/app/dashboard", icon: HouseIcon, roles: ['app'] },
-    { title: "Perfil", url: "/app/perfil", icon: User2, roles: ['app'] },
-    { title: "Histórico", url: "/app/historico", icon: Clock10, roles: ['app'] },
+    { title: "Central de Chamados", url: "/app/dashboard", icon: HouseIcon, roles: ['app'], type: 3 },
+    { title: "Perfil", url: "/app/perfil", icon: User2, roles: ['app'], type: 3 },
+    { title: "Histórico", url: "/app/historico", icon: Clock10, roles: ['app'], type: 3 },
+    { title: "Central de Atendimentos", url: "/app/atendente", icon: HouseIcon, roles: ['app'], type: 2 },
+
     /* {
       title: "Laudadores", url: "#", icon: UsersRound, items:
         [
@@ -48,9 +48,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="bg-primary">
         <NavMain items={data.navMain} />
       </SidebarContent >
-      <SidebarFooter className="bg-primary">
+      {/* <SidebarFooter className="bg-primary">
         <NavUser user={data.user} />
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   )

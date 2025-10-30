@@ -204,7 +204,7 @@ export function TicketsDashboard() {
                                     ) : (
                                         <div className="w-full border border-zinc-300 rounded-md p-4 text-center">
                                             <p>Nenhum chamado encontrado com os filtros selecionados.</p>
-                                        </div>
+                                        </div> 
                                     )}
                                 </>
                             )}
