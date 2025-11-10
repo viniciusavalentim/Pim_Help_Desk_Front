@@ -6,8 +6,13 @@
 // =================================================================
 
 export enum CategoryEnum {
-    devices = 1,
+    technicalSupport = 1,
+    infrastructure = 2,
+    software = 3,
+    hardware = 4,
+    network = 5,
 }
+
 
 export enum LogTypeEnum {
     login = 1,

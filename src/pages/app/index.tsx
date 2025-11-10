@@ -5,9 +5,11 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/context/AuthContext"
 import { Outlet } from "react-router-dom"
 
 export default function Page() {
+    const { user } = useAuth();
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -16,7 +18,7 @@ export default function Page() {
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1 text-zinc-800 cursor-pointer" />
                         <Separator orientation="vertical" className="mr-2 h-4" />
-                        <h1 className="text-lg text-zinc-800 font-bold">Little Bird | Solicitante</h1>
+                        <h1 className="text-lg text-zinc-800 font-bold">Little Bird | {user?.userType === 3 ? "Solicitante" : "Atendente"}</h1>
                     </div>
                 </header>
                 <div>

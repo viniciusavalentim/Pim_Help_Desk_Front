@@ -8,6 +8,7 @@ import { ViewTicket } from "./pages/app/requester/dashboard/viewTicket";
 import { NewTicket } from "./pages/app/requester/ticket/novo-ticket";
 import ChamadoSucesso from "./pages/app/requester/ticket/success-ticket";
 import { AtendentePage } from "./pages/app/attedant";
+import { Reports } from "./pages/app/attedant/reports";
 
 export const route = createBrowserRouter([
     {
@@ -66,7 +67,10 @@ export const route = createBrowserRouter([
                         path: "atendente",
                         element: <AtendentePage />
                     },
-
+                    {
+                        path: "relatorios",
+                        element: <Reports />
+                    },
                 ]
             },
         ]

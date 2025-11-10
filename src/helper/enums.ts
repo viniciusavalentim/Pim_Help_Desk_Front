@@ -10,15 +10,15 @@ import { CategoryEnum, LogTypeEnum, PriorityEnum, StatusTicketEnum, StatusUserEn
  * @returns O valor do enum ou undefined.
  */
 export function getPriorityEnumFromString(key: string): PriorityEnum | undefined {
-    // Converte a chave para minúsculas para ser case-insensitive
-    const lowerKey = key.toLowerCase();
-    // Obtém as chaves do enum que não são números (isso evita as chaves de mapeamento reverso)
-    const enumKeys = Object.keys(PriorityEnum).filter(k => isNaN(Number(k)));
+  // Converte a chave para minúsculas para ser case-insensitive
+  const lowerKey = key.toLowerCase();
+  // Obtém as chaves do enum que não são números (isso evita as chaves de mapeamento reverso)
+  const enumKeys = Object.keys(PriorityEnum).filter(k => isNaN(Number(k)));
 
-    // Procura a chave no enum
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  // Procura a chave no enum
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
 
-    return foundKey ? PriorityEnum[foundKey as keyof typeof PriorityEnum] : undefined;
+  return foundKey ? PriorityEnum[foundKey as keyof typeof PriorityEnum] : undefined;
 }
 
 /**
@@ -27,7 +27,7 @@ export function getPriorityEnumFromString(key: string): PriorityEnum | undefined
  * @returns A string correspondente (ex: "high") ou undefined.
  */
 export function getPriorityStringFromEnum(value: PriorityEnum): string | undefined {
-    return PriorityEnum[value];
+  return PriorityEnum[value];
 }
 
 
@@ -36,14 +36,14 @@ export function getPriorityStringFromEnum(value: PriorityEnum): string | undefin
 // =================================================================
 
 export function getStatusTicketEnumFromString(key: string): StatusTicketEnum | undefined {
-    const lowerKey = key.toLowerCase();
-    const enumKeys = Object.keys(StatusTicketEnum).filter(k => isNaN(Number(k)));
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
-    return foundKey ? StatusTicketEnum[foundKey as keyof typeof StatusTicketEnum] : undefined;
+  const lowerKey = key.toLowerCase();
+  const enumKeys = Object.keys(StatusTicketEnum).filter(k => isNaN(Number(k)));
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  return foundKey ? StatusTicketEnum[foundKey as keyof typeof StatusTicketEnum] : undefined;
 }
 
 export function getStatusTicketStringFromEnum(value: StatusTicketEnum): string | undefined {
-    return StatusTicketEnum[value];
+  return StatusTicketEnum[value];
 }
 
 
@@ -52,14 +52,14 @@ export function getStatusTicketStringFromEnum(value: StatusTicketEnum): string |
 // =================================================================
 
 export function getCategoryEnumFromString(key: string): CategoryEnum | undefined {
-    const lowerKey = key.toLowerCase();
-    const enumKeys = Object.keys(CategoryEnum).filter(k => isNaN(Number(k)));
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
-    return foundKey ? CategoryEnum[foundKey as keyof typeof CategoryEnum] : undefined;
+  const lowerKey = key.toLowerCase();
+  const enumKeys = Object.keys(CategoryEnum).filter(k => isNaN(Number(k)));
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  return foundKey ? CategoryEnum[foundKey as keyof typeof CategoryEnum] : undefined;
 }
 
 export function getCategoryStringFromEnum(value: CategoryEnum): string | undefined {
-    return CategoryEnum[value];
+  return CategoryEnum[value];
 }
 
 
@@ -68,14 +68,14 @@ export function getCategoryStringFromEnum(value: CategoryEnum): string | undefin
 // =================================================================
 
 export function getStatusUserEnumFromString(key: string): StatusUserEnum | undefined {
-    const lowerKey = key.toLowerCase();
-    const enumKeys = Object.keys(StatusUserEnum).filter(k => isNaN(Number(k)));
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
-    return foundKey ? StatusUserEnum[foundKey as keyof typeof StatusUserEnum] : undefined;
+  const lowerKey = key.toLowerCase();
+  const enumKeys = Object.keys(StatusUserEnum).filter(k => isNaN(Number(k)));
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  return foundKey ? StatusUserEnum[foundKey as keyof typeof StatusUserEnum] : undefined;
 }
 
 export function getStatusUserStringFromEnum(value: StatusUserEnum): string | undefined {
-    return StatusUserEnum[value];
+  return StatusUserEnum[value];
 }
 
 
@@ -84,14 +84,14 @@ export function getStatusUserStringFromEnum(value: StatusUserEnum): string | und
 // =================================================================
 
 export function getUserTypeEnumFromString(key: string): UserTypeEnum | undefined {
-    const lowerKey = key.toLowerCase();
-    const enumKeys = Object.keys(UserTypeEnum).filter(k => isNaN(Number(k)));
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
-    return foundKey ? UserTypeEnum[foundKey as keyof typeof UserTypeEnum] : undefined;
+  const lowerKey = key.toLowerCase();
+  const enumKeys = Object.keys(UserTypeEnum).filter(k => isNaN(Number(k)));
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  return foundKey ? UserTypeEnum[foundKey as keyof typeof UserTypeEnum] : undefined;
 }
 
 export function getUserTypeStringFromEnum(value: UserTypeEnum): string | undefined {
-    return UserTypeEnum[value];
+  return UserTypeEnum[value];
 }
 
 
@@ -100,14 +100,14 @@ export function getUserTypeStringFromEnum(value: UserTypeEnum): string | undefin
 // =================================================================
 
 export function getLogTypeEnumFromString(key: string): LogTypeEnum | undefined {
-    const lowerKey = key.toLowerCase();
-    const enumKeys = Object.keys(LogTypeEnum).filter(k => isNaN(Number(k)));
-    const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
-    return foundKey ? LogTypeEnum[foundKey as keyof typeof LogTypeEnum] : undefined;
+  const lowerKey = key.toLowerCase();
+  const enumKeys = Object.keys(LogTypeEnum).filter(k => isNaN(Number(k)));
+  const foundKey = enumKeys.find(k => k.toLowerCase() === lowerKey);
+  return foundKey ? LogTypeEnum[foundKey as keyof typeof LogTypeEnum] : undefined;
 }
 
 export function getLogTypeStringFromEnum(value: LogTypeEnum): string | undefined {
-    return LogTypeEnum[value];
+  return LogTypeEnum[value];
 }
 
 
@@ -147,12 +147,18 @@ export function getStatusTicketInPortuguese(value: StatusTicketEnum): string {
 
 // --- Tradução para CategoryEnum ---
 const categoryTranslations: Record<CategoryEnum, string> = {
-  [CategoryEnum.devices]: 'Dispositivos',
+  [CategoryEnum.technicalSupport]: 'Suporte Técnico',
+  [CategoryEnum.infrastructure]: 'Infraestrutura',
+  [CategoryEnum.software]: 'Software',
+  [CategoryEnum.hardware]: 'Hardware',
+  [CategoryEnum.network]: 'Rede',
 };
+
 
 export function getCategoryInPortuguese(value: CategoryEnum): string {
   return categoryTranslations[value] || 'Categoria desconhecida';
 }
+
 
 
 // --- Tradução para StatusUserEnum ---
@@ -180,13 +186,13 @@ export function getUserTypeInPortuguese(value: UserTypeEnum): string {
 
 
 const logTypeTranslations: Record<LogTypeEnum, string> = {
-    [LogTypeEnum.login]: 'Login',
-    [LogTypeEnum.logout]: 'Logout',
-    [LogTypeEnum.register]: 'Cadastro',
-    [LogTypeEnum.ticket]: 'Ticket',
-    [LogTypeEnum.report]: 'Relatório',
+  [LogTypeEnum.login]: 'Login',
+  [LogTypeEnum.logout]: 'Logout',
+  [LogTypeEnum.register]: 'Cadastro',
+  [LogTypeEnum.ticket]: 'Ticket',
+  [LogTypeEnum.report]: 'Relatório',
 };
 
 export function getLogTypeInPortuguese(value: LogTypeEnum): string {
-    return logTypeTranslations[value] || 'Tipo de log desconhecido';
+  return logTypeTranslations[value] || 'Tipo de log desconhecido';
 }

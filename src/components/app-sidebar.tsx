@@ -1,5 +1,8 @@
 import * as React from "react"
 import {
+  BookAIcon,
+  BookDashedIcon,
+  BookIcon,
   Clock10,
   HouseIcon,
   User2,
@@ -19,9 +22,10 @@ const data = {
     { name: "Bleiner", email: "bleiner@gmail.com", avatar: "/bleiner.png" },
   navMain: [
     { title: "Central de Chamados", url: "/app/dashboard", icon: HouseIcon, roles: ['app'], type: 3 },
-    { title: "Perfil", url: "/app/perfil", icon: User2, roles: ['app'], type: 3 },
-    { title: "Histórico", url: "/app/historico", icon: Clock10, roles: ['app'], type: 3 },
+    // { title: "Perfil", url: "/app/perfil", icon: User2, roles: ['app'], type: 3 },
+    // { title: "Histórico", url: "/app/historico", icon: Clock10, roles: ['app'], type: 3 },
     { title: "Central de Atendimentos", url: "/app/atendente", icon: HouseIcon, roles: ['app'], type: 2 },
+    { title: "Relatórios", url: "/app/relatorios", icon: BookIcon, roles: ['app'], type: 2 },
 
     /* {
       title: "Laudadores", url: "#", icon: UsersRound, items:

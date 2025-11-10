@@ -19,7 +19,7 @@ import { PriorityEnum, StatusTicketEnum } from "@/utils/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import FloatingChat from "../components/floating-chat";
 
-function getDate(date: string) {
+export function getDate(date: string) {
     return new Date(date).toLocaleDateString();
 }
 
