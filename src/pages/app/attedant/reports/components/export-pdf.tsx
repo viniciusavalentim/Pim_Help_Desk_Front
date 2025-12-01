@@ -1,4 +1,4 @@
-import { getCategoryInPortuguese, getPriorityInPortuguese } from "@/helper/enums"
+import { getCategoryInPortuguese, getPriorityInPortuguese, getStatusTicketInPortuguese } from "@/helper/enums"
 import { getDate } from "@/pages/app/requester/dashboard"
 import { Ticket } from "@/utils/types"
 
@@ -10,7 +10,7 @@ export function exportToPDF(tickets: Ticket[], filename = "tickets-report") {
   const contentWidth = pageWidth - margin * 2
 
   // Calculate column widths
-  const columns = ["ID", "Solicitante", "Título", "Descrição", "Data", "Categoria", "Prioridade"]
+  const columns = ["ID", "Solicitante", "Título", "Descrição", "Data", "Categoria", "Prioridade", "Status"]
   const colWidth = contentWidth / columns.length
 
   // Build PDF content
@@ -109,6 +109,7 @@ function generateHTMLTable(tickets: Ticket[], columns: string[]): string {
           <td>${getDate(ticket.createdAt)}</td>
           <td>${getCategoryInPortuguese(ticket.category)}</td>
           <td><span class="${priorityClass}" style="padding: 4px 8px; border-radius: 4px; display: inline-block;">${getPriorityInPortuguese(ticket.priority)}</span></td>
+          <td><span class="${priorityClass}" style="padding: 4px 8px; border-radius: 4px; display: inline-block;">${getStatusTicketInPortuguese(ticket.status)}</span></td>
         </tr>
       `
     })
